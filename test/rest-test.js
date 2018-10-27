@@ -5,6 +5,10 @@ const client = new RestClient({ apiKey: API_KEY, apiSecret: API_SECRET })
 
 describe('bitmex-node', () => {
   describe('rest', () => {
-
+    it('should list orders', async () => {
+      let results = await client.getOrder()
+      should.exist(results)
+      results.length.should.equal(0)
+    })
   })
 })

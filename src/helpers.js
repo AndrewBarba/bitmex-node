@@ -1,7 +1,8 @@
 const crypto = require('crypto')
 
 /**
- * @method sign
+ * @method requestSignature
+ * @param {String} secret
  * @param {String} options.method
  * @param {String} options.url
  * @param {Number} options.expires
@@ -10,7 +11,7 @@ const crypto = require('crypto')
  */
 exports.requestSignature = (secret, { method, url, expires, body = '' }) => {
   let hmac = crypto.createHmac('sha256', secret)
-  return hmac.update(`${method}${url}${expires}${body}`).digest('hex')
+  return hmac.update(`${method.toUpperCase()}${url}${expires}${body}`).digest('hex')
 }
 
 /**

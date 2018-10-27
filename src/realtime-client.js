@@ -6,13 +6,11 @@ class RealtimeClient extends EventEmitter {
 
   /**
    * @constructor
-   * @param {String} options.apiKey
-   * @param {String} options.apiSecret
+   * @param {String} [options.apiKey]
+   * @param {String} [options.apiSecret]
    * @param {Boolean} [options.testnet=false]
    */
   constructor({ apiKey, apiSecret, testnet = false } = {}) {
-    if (!apiKey) throw new Error('apiKey is required')
-    if (!apiSecret) throw new Error('apiSecret is required')
     super()
     this._apiKey = apiKey
     this._apiSecret = apiSecret
