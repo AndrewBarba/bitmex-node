@@ -6,9 +6,8 @@ const client = new RealtimeClient({ apiKey: API_KEY, apiSecret: API_SECRET })
 describe('bitmex-node', () => {
   describe('realtime', () => {
     it('should connect and authenticate', done => {
-      client.on('authenticated', result => {
+      client.on('open', () => {
         client.readyState.should.equal(1)
-        result.success.should.equal(true)
         done()
       })
     })

@@ -39,11 +39,19 @@ class RealtimeClient extends EventEmitter {
    */
   connect() {
     let url = this._testnet ? 'wss://testnet.bitmex.com/realtime' : 'wss://www.bitmex.com/realtime'
-    this._socket = new WebSocket(url)
-    this._socket.on('open', () => {
-      this.emit('ready')
-      if (this._apiKey) this.authenticate()
-    })
+    let headers = {}
+
+    if (this._apiKey) {
+      let method = 'GET'
+      let url = '/realtime'
+      let expires = helpers.time()
+      headers['api-key'] = this._apiKey
+      headers['api-expires'] = expires
+      headers['api-signature'] = helpers.requestSignature(this._apiSecret, { method, url, expires })
+    }
+
+    this._socket = new WebSocket(url, null, { headers })
+    this._socket.on('open', () => this.emit('open'))
     this._socket.on('close', () => this.emit('close'))
     this._socket.on('error', () => this.emit('error'))
     this._socket.on('message', text => this._onMessage(text))
@@ -86,19 +94,6 @@ class RealtimeClient extends EventEmitter {
 
     if (message.request)
       this.emit(`message.request.${message.request.op}`, message)
-
-    if (message.request && message.request.op === 'authKeyExpires')
-      this.emit('authenticated', message)
-  }
-
-  /**
-   * @method authenticate
-   * @param {Number} [expires]
-   * @return {Promise}
-   */
-  authenticate(expires = helpers.time()) {
-    let signature = helpers.requestSignature(this._apiSecret, { method: 'GET', url: '/realtime', expires })
-    return this.request('authKeyExpires', [this._apiKey, expires, signature])
   }
 
   /**

@@ -10,5 +10,12 @@ describe('bitmex-node', () => {
       should.exist(results)
       results.length.should.equal(0)
     })
+
+    it('should get positions', async () => {
+      let filter = JSON.stringify({ symbol: 'XBTUSD' })
+      let results = await client.getPosition({ filter })
+      should.exist(results)
+      results.length.should.equal(0)
+    })
   })
 })
