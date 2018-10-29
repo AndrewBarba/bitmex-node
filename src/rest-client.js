@@ -87,9 +87,9 @@ class RestClient {
    */
   async request(method, path, { params, data, attempt = 1, expires = helpers.time() } = {}) {
     let url = params ? `${path}?${stringify(params)}` : path
-    let body = data ? stringify(data) : ''
+    let body = data ? JSON.stringify(data) : ''
     let headers = {
-      'content-type': 'application/x-www-form-urlencoded',
+      'content-type': 'application/json',
       'accept': 'application/json',
       'api-expires': expires
     }
