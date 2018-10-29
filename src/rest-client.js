@@ -104,7 +104,13 @@ class RestClient {
       })
     }
 
-    let res = await this._client.request({ method, url, headers, validateStatus: null })
+    let res = await this._client.request({
+      method,
+      url,
+      headers,
+      data: body,
+      validateStatus: null
+    })
 
     // Handle retries
     if (res.status === 503) {
