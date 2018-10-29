@@ -107,13 +107,24 @@ class RealtimeClient extends EventEmitter {
    */
   async subscribe(table, callback) {
     let promise = new Promise((resolve, reject) => {
-      this.once(`message.subscribe.${table}`, result => {
-        if (!result.success) return reject(result)
-        this.on(`message.table.${table}`, callback)
-        resolve(result)
+      let partial = false
+
+      this.once(`message.subscribe.${table}`, msg => {
+        if (!msg.success) reject(msg)
+      })
+
+      this.on(`message.table.${table}`, msg => {
+        if (partial) {
+          return callback(msg)
+        } else if (msg.action === 'partial') {
+          partial = true
+          return resolve(msg)
+        }
       })
     })
+
     await this.request('subscribe', table)
+
     return promise
   }
 

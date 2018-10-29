@@ -12,18 +12,16 @@ describe('bitmex-node', () => {
       })
     })
 
-    it('should subscribe to margin updates', done => {
-      client.subscribe('margin', result => {
-        result.action.should.equal('partial')
-        done()
-      })
+    it('should subscribe to margin updates', async () => {
+      let msg = await client.subscribe('margin', () => {})
+      should.exist(msg)
+      msg.action.should.equal('partial')
     })
 
-    it('should subscribe to quote updates', done => {
-      client.subscribe('quote:XBTUSD', result => {
-        result.action.should.equal('partial')
-        done()
-      })
+    it('should subscribe to quote updates', async () => {
+      let msg = await client.subscribe('quote:XBTUSD', () => {})
+      should.exist(msg)
+      msg.action.should.equal('partial')
     })
 
     it('should close', done => {
