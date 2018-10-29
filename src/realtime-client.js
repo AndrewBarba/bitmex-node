@@ -92,6 +92,9 @@ class RealtimeClient extends EventEmitter {
     if (message.table && message.filter)
       this.emit(`message.table.${message.table}:${message.filter.symbol}`, message)
 
+    if (message.table && message.data.length)
+      this.emit(`message.table.${message.table}:${message.data[0].symbol}`, message)
+
     if (message.error)
       this.emit(`message.error`, message)
 
@@ -114,7 +117,7 @@ class RealtimeClient extends EventEmitter {
       })
 
       this.on(`message.table.${table}`, msg => {
-        if (partial) {
+        if (partial && msg.action !== 'partial') {
           return callback(msg)
         } else if (msg.action === 'partial') {
           partial = true

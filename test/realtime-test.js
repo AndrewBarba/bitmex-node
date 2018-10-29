@@ -19,9 +19,14 @@ describe('bitmex-node', () => {
     })
 
     it('should subscribe to quote updates', async () => {
-      let msg = await client.subscribe('quote:XBTUSD', () => {})
-      should.exist(msg)
-      msg.action.should.equal('partial')
+      await new Promise(async resolve => {
+        let msg = await client.subscribe('quote:XBTUSD', msg => {
+          msg.action.should.equal('insert')
+          resolve()
+        })
+        should.exist(msg)
+        msg.action.should.equal('partial')
+      })
     })
 
     it('should subscribe to position updates', async () => {
