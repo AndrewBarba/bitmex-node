@@ -19,6 +19,13 @@ describe('bitmex-node', () => {
       })
     })
 
+    it('should subscribe to quote updates', done => {
+      client.subscribe('quote:XBTUSD', result => {
+        result.action.should.equal('partial')
+        done()
+      })
+    })
+
     it('should close', done => {
       client.on('close', done)
       client.disconnect()
