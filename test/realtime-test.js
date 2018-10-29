@@ -24,6 +24,18 @@ describe('bitmex-node', () => {
       msg.action.should.equal('partial')
     })
 
+    it('should subscribe to position updates', async () => {
+      let msg = await client.subscribe('position:XBTUSD', () => {})
+      should.exist(msg)
+      msg.action.should.equal('partial')
+    })
+
+    it('should subscribe to order updates', async () => {
+      let msg = await client.subscribe('order:XBTUSD', () => {})
+      should.exist(msg)
+      msg.action.should.equal('partial')
+    })
+
     it('should close', done => {
       client.on('close', done)
       client.disconnect()

@@ -89,8 +89,8 @@ class RealtimeClient extends EventEmitter {
     if (message.table)
       this.emit(`message.table.${message.table}`, message)
 
-    if (message.table && message.data[0] && message.data[0].symbol)
-      this.emit(`message.table.${message.table}:${message.data[0].symbol}`, message)
+    if (message.table && message.filter)
+      this.emit(`message.table.${message.table}:${message.filter.symbol}`, message)
 
     if (message.error)
       this.emit(`message.error`, message)
