@@ -187,7 +187,7 @@ class RealtimeClient extends EventEmitter {
    */
   _firePing() {
     this._socket.ping()
-    this._closeInterval = setInterval(() => this.disconnect(1005), 15000)
+    this._closeInterval = setInterval(() => this.disconnect(1001), 15000)
   }
 
   /**
