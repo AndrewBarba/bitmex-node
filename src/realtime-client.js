@@ -52,9 +52,9 @@ class RealtimeClient extends EventEmitter {
 
     this._socket = new WebSocket(url, null, { headers })
     this._socket.on('open', () => this.emit('open'))
-    this._socket.on('close', () => this.emit('close'))
     this._socket.on('error', () => this.emit('error'))
-    this._socket.on('message', text => this._onMessage(text))
+    this._socket.on('close', this._onClose.bind(this))
+    this._socket.on('message', this._onMessage.bind(this))
   }
 
   /**
@@ -62,7 +62,7 @@ class RealtimeClient extends EventEmitter {
    */
   disconnect() {
     clearInterval(this._pingInterval)
-    this._socket.close()
+    this._socket.close(1000)
     this._socket = null
   }
 
@@ -100,6 +100,17 @@ class RealtimeClient extends EventEmitter {
 
     if (message.request)
       this.emit(`message.request.${message.request.op}`, message)
+  }
+
+  /**
+   * @private
+   * @method _onClose
+   * @param {String} data
+   */
+  _onClose(code) {
+    clearInterval(this._pingInterval)
+    this._socket = null
+    this.emit('close', code)
   }
 
   /**

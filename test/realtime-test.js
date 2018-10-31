@@ -42,7 +42,11 @@ describe('bitmex-node', () => {
     })
 
     it('should close', done => {
-      client.on('close', done)
+      client.on('close', code => {
+        should.exist(code)
+        code.should.equal(1000)
+        done()
+      })
       client.disconnect()
       should.not.exist(client._socket)
     })
