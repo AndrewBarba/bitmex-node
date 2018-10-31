@@ -143,6 +143,16 @@ class RealtimeClient extends EventEmitter {
   }
 
   /**
+   * @method unsubscribe
+   * @param {String} table
+   * @param {Function} callback
+   * @return {Promise}
+   */
+  async unsubscribe(table, callback) {
+    this.removeListener(table, callback)
+  }
+
+  /**
    * @method request
    * @param {String} op
    * @param {Array|String} [args]
