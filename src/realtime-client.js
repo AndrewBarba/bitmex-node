@@ -65,8 +65,12 @@ class RealtimeClient extends EventEmitter {
    */
   disconnect(code = 1000) {
     clearInterval(this._pingInterval)
-    this._socket.close(code)
-    this._socket = null
+    if (this.readyState === 1) {
+      this._socket.close(code)
+      this._socket = null
+    } else {
+      this.emit('close', code)
+    }
   }
 
   /**
