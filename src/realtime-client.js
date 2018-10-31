@@ -16,6 +16,7 @@ class RealtimeClient extends EventEmitter {
     this._apiSecret = apiSecret
     this._testnet = testnet
     this._pingInterval = null
+    this._closeInterval = null
     this.connect()
   }
 
@@ -54,15 +55,17 @@ class RealtimeClient extends EventEmitter {
     this._socket.on('open', () => this.emit('open'))
     this._socket.on('error', () => this.emit('error'))
     this._socket.on('close', this._onClose.bind(this))
+    this._socket.on('pong', this._onPong.bind(this))
     this._socket.on('message', this._onMessage.bind(this))
   }
 
   /**
    * @method disconnect
+   * @param {Number} code
    */
-  disconnect() {
+  disconnect(code = 1000) {
     clearInterval(this._pingInterval)
-    this._socket.close(1000)
+    this._socket.close(code)
     this._socket = null
   }
 
@@ -174,7 +177,25 @@ class RealtimeClient extends EventEmitter {
    */
   _touchPingInterval() {
     clearInterval(this._pingInterval)
-    this._pingInterval = setInterval(() => this._socket.ping(), 5000)
+    clearInterval(this._closeInterval)
+    this._pingInterval = setInterval(this._firePing.bind(this), 5000)
+  }
+
+  /**
+   * @private
+   * @method _firePing
+   */
+  _firePing() {
+    this._socket.ping()
+    this._closeInterval = setInterval(() => this.disconnect(1005), 15000)
+  }
+
+  /**
+   * @private
+   * @method _onPong
+   */
+  _onPong() {
+    clearInterval(this._closeInterval)
   }
 }
 
