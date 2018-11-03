@@ -5,11 +5,9 @@ const client = new RealtimeClient({ apiKey: API_KEY, apiSecret: API_SECRET })
 
 describe('bitmex-node', () => {
   describe('realtime', () => {
-    it('should connect and authenticate', done => {
-      client.on('open', () => {
-        client.readyState.should.equal(1)
-        done()
-      })
+
+    before(done => {
+      client.on('open', done)
     })
 
     it('should subscribe to margin updates', async () => {
@@ -39,6 +37,19 @@ describe('bitmex-node', () => {
       let msg = await client.subscribe('order:XBTUSD', () => {})
       should.exist(msg)
       msg.action.should.equal('partial')
+    })
+
+    it('should subscribe to order book L2', async () => {
+      let data = []
+      let partial = await client.subscribe('orderBookL2:XBTUSD', msg => {
+        let oldLength = data.length
+        let newLength = client.helpers.apply(msg.action, data, msg.data).length
+        if (msg.action === 'update') oldLength.should.equal(newLength)
+        if (msg.action === 'insert') oldLength.should.equal(newLength - msg.data.length)
+        if (msg.action === 'delete') oldLength.should.equal(newLength + msg.data.length)
+      })
+      data = partial.data
+      await new Promise(done => setTimeout(done, 3000))
     })
 
     it('should close', done => {

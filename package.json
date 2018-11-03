@@ -36,6 +36,6 @@
   },
   "scripts": {
     "lint": "npx eslint ./",
-    "test": "env $(cat .env | xargs) npx mocha --exit --bail --slow 1000 --timeout 10000 ./test"
+    "test": "env $(cat .env | xargs) npx mocha --exit --bail --slow 1000 --timeout 60000 ./test"
   }
 }

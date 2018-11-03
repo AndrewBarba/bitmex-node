@@ -21,6 +21,13 @@ class RealtimeClient extends EventEmitter {
   }
 
   /**
+   * @param {Helpers} helpers
+   */
+  get helpers() {
+    return helpers
+  }
+
+  /**
    * @param {Number} readyState
    */
   get readyState() {

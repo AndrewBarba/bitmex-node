@@ -1,5 +1,6 @@
 const RestClient = require('./rest-client')
 const RealtimeClient = require('./realtime-client')
+const helpers = require('./helpers')
 
 class Bitmex {
 
@@ -40,6 +41,13 @@ class Bitmex {
    */
   get realtime() {
     return this._realtime
+  }
+
+  /**
+   * @param {Helpers} helpers
+   */
+  get helpers() {
+    return helpers
   }
 
   /**

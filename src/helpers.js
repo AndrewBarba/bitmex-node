@@ -22,3 +22,83 @@ exports.requestSignature = (secret, { method, url, expires, body = '' }) => {
 exports.time = (offset = 60) => {
   return parseInt(Date.now() / 1000) + offset
 }
+
+/**
+ * @method apply
+ * @param {String} action
+ * @param {Array} existingData
+ * @param {Array} newData
+ * @return {Array}
+ */
+exports.apply = (action, existingData, newData) => {
+  switch (action) {
+  case 'partial': return newData
+  case 'insert': return this.applyInsert(existingData, newData)
+  case 'update': return this.applyUpdate(existingData, newData)
+  case 'delete': return this.applyDelete(existingData, newData)
+  default: throw new Error('Invalid action.')
+  }
+}
+
+/**
+ * @method applyInsert
+ * @param {Array} existingData
+ * @param {Array} newData
+ * @return {Array}
+ */
+exports.applyInsert = (existingData, newData) => {
+  let ei = 0; let ni = 0
+  while (ei < existingData.length || ni < newData.length) {
+    let eo = existingData[ei]
+    let no = newData[ni]
+    if ((!eo && no) || (eo && no && no.id < eo.id)) {
+      existingData.splice(ei, 0, no)
+      ni += 1
+    } else {
+      ei += 1
+    }
+  }
+  return existingData
+}
+
+/**
+ * @method applyUpdate
+ * @param {Array} existingData
+ * @param {Array} newData
+ * @return {Array}
+ */
+exports.applyUpdate = (existingData, newData) => {
+  let ei = 0; let ni = 0
+  while (ei < existingData.length || ni < newData.length) {
+    let eo = existingData[ei]
+    let no = newData[ni]
+    if (eo && no && no.id === eo.id) {
+      existingData.splice(ei, 1, { ...eo, ...no })
+      ni += 1; ei += 1
+    } else {
+      ei += 1
+    }
+  }
+  return existingData
+}
+
+/**
+ * @method applyDelete
+ * @param {Array} existingData
+ * @param {Array} newData
+ * @return {Array}
+ */
+exports.applyDelete = (existingData, newData) => {
+  let ei = 0; let ni = 0
+  while (ei < existingData.length || ni < newData.length) {
+    let eo = existingData[ei]
+    let no = newData[ni]
+    if (eo && no && no.id === eo.id) {
+      existingData.splice(ei, 1)
+      ni += 1; ei += 1
+    } else {
+      ei += 1
+    }
+  }
+  return existingData
+}
