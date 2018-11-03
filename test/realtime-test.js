@@ -1,12 +1,13 @@
 const { API_KEY, API_SECRET } = process.env
 const should = require('should')
 const { RealtimeClient } = require('../src')
-const client = new RealtimeClient({ apiKey: API_KEY, apiSecret: API_SECRET })
+let client = null
 
 describe('bitmex-node', () => {
   describe('realtime', () => {
 
-    before(done => {
+    beforeEach(done => {
+      client = new RealtimeClient({ apiKey: API_KEY, apiSecret: API_SECRET })
       client.on('open', done)
     })
 
@@ -39,7 +40,7 @@ describe('bitmex-node', () => {
       msg.action.should.equal('partial')
     })
 
-    it('should subscribe to order book L2', async () => {
+    it('should subscribe to raw order book L2', async () => {
       let data = []
       let partial = await client.subscribe('orderBookL2:XBTUSD', msg => {
         let oldLength = data.length
@@ -49,6 +50,14 @@ describe('bitmex-node', () => {
         if (msg.action === 'delete') oldLength.should.equal(newLength + msg.data.length)
       })
       data = partial.data
+      await new Promise(done => setTimeout(done, 3000))
+    })
+
+    it('should subscribe to order book L2', async () => {
+      let book = await client.orderBookL2('XBTUSD', book => {
+        book.askPrice.should.be.above(book.bidPrice)
+      })
+      should.exist(book)
       await new Promise(done => setTimeout(done, 3000))
     })
 

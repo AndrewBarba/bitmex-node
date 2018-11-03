@@ -69,11 +69,11 @@ exports.applyInsert = (existingData, newData) => {
  */
 exports.applyUpdate = (existingData, newData) => {
   let ei = 0; let ni = 0
-  while (ei < existingData.length || ni < newData.length) {
+  while (ei < existingData.length && ni < newData.length) {
     let eo = existingData[ei]
     let no = newData[ni]
     if (eo && no && no.id === eo.id) {
-      existingData.splice(ei, 1, { ...eo, ...no })
+      existingData[ei] = { ...eo, ...no }
       ni += 1; ei += 1
     } else {
       ei += 1
@@ -90,7 +90,7 @@ exports.applyUpdate = (existingData, newData) => {
  */
 exports.applyDelete = (existingData, newData) => {
   let ei = 0; let ni = 0
-  while (ei < existingData.length || ni < newData.length) {
+  while (ei < existingData.length && ni < newData.length) {
     let eo = existingData[ei]
     let no = newData[ni]
     if (eo && no && no.id === eo.id) {

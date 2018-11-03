@@ -1,5 +1,6 @@
 const EventEmitter = require('events')
 const WebSocket = require('ws')
+const OrderBook = require('./order-book')
 const helpers = require('./helpers')
 
 class RealtimeClient extends EventEmitter {
@@ -125,6 +126,22 @@ class RealtimeClient extends EventEmitter {
     clearInterval(this._pingInterval)
     this._socket = null
     this.emit('close', code)
+  }
+
+  /**
+   * @method orderBookL2
+   * @param {String} symbol
+   * @param {Function} callback
+   * @return {Promise}
+   */
+  async orderBookL2(symbol, callback) {
+    let orderBook = new OrderBook()
+    let result = await this.subscribe(`orderBookL2:${symbol}`, update => {
+      orderBook.apply(update)
+      callback(orderBook, update)
+    })
+    orderBook.apply(result)
+    return orderBook
   }
 
   /**
