@@ -52,6 +52,15 @@ describe('bitmex-node', () => {
         result[1].id.should.equal(2)
         result[2].id.should.equal(5)
       })
+      it('should delete 2 items at beginning', () => {
+        let data = [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 4 }, { id: 5 }]
+        let newData = [{ id: 0 }, { id: 1 }]
+        let result = helpers.applyDelete(data, newData)
+        result.length.should.equal(3)
+        result[0].id.should.equal(2)
+        result[1].id.should.equal(4)
+        result[2].id.should.equal(5)
+      })
     })
 
   })

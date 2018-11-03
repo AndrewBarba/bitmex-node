@@ -180,6 +180,7 @@ class RealtimeClient extends EventEmitter {
    * @return {Promise}
    */
   async unsubscribe(table, callback) {
+    await this.request('unsubscribe', table)
     this.removeListener(table, callback)
   }
 

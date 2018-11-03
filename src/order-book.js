@@ -23,6 +23,17 @@ class OrderBook {
     return this._sells[this._sells.length - 1].price
   }
 
+  bidSize(start = 0, end = start + 1) {
+    if (end <= start) throw new Error(`Invalid range: [${start}, ${end})`)
+    return this.buys.slice(start, end).reduce((a, b) => a + b.size, 0)
+  }
+
+  askSize(start = 0, end = start + 1) {
+    if (end <= start) throw new Error(`Invalid range: [${start}, ${end})`)
+    let n = this.sells.length
+    return this.sells.slice(n - end, n - start).reduce((a, b) => a + b.size, 0)
+  }
+
   apply({ action, data }) {
     let buyUpdates = data.filter(item => item.side === 'Buy')
     this._buys = helpers.apply(action, this._buys, buyUpdates)

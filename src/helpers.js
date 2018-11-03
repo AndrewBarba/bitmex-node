@@ -31,6 +31,8 @@ exports.time = (offset = 60) => {
  * @return {Array}
  */
 exports.apply = (action, existingData, newData) => {
+  if (!newData.length) return existingData
+
   switch (action) {
   case 'partial': return newData
   case 'insert': return this.applyInsert(existingData, newData)
@@ -51,7 +53,7 @@ exports.applyInsert = (existingData, newData) => {
   while (ei < existingData.length || ni < newData.length) {
     let eo = existingData[ei]
     let no = newData[ni]
-    if ((!eo && no) || (eo && no && no.id < eo.id)) {
+    if (!eo || (eo && no && no.id < eo.id)) {
       existingData.splice(ei, 0, no)
       ni += 1
     } else {
@@ -95,7 +97,7 @@ exports.applyDelete = (existingData, newData) => {
     let no = newData[ni]
     if (eo && no && no.id === eo.id) {
       existingData.splice(ei, 1)
-      ni += 1; ei += 1
+      ni += 1
     } else {
       ei += 1
     }
