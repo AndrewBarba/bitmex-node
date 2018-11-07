@@ -1,10 +1,19 @@
 const { API_KEY, API_SECRET } = process.env
 const should = require('should')
 const { RestClient } = require('../src')
-const client = new RestClient({ apiKey: API_KEY, apiSecret: API_SECRET })
+let client = null
 
 describe('bitmex-node', () => {
   describe('rest', () => {
+
+    beforeEach(() => {
+      client = new RestClient({
+        apiKey: API_KEY,
+        apiSecret: API_SECRET,
+        testnet: true
+      })
+    })
+
     it('should list orders', async () => {
       let results = await client.getOrder()
       should.exist(results)

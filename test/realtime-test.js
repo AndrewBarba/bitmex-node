@@ -7,7 +7,11 @@ describe('bitmex-node', () => {
   describe('realtime', () => {
 
     beforeEach(done => {
-      client = new RealtimeClient({ apiKey: API_KEY, apiSecret: API_SECRET })
+      client = new RealtimeClient({
+        apiKey: API_KEY,
+        apiSecret: API_SECRET,
+        testnet: true
+      })
       client.on('open', done)
     })
 
@@ -70,5 +74,6 @@ describe('bitmex-node', () => {
       client.disconnect()
       should.not.exist(client._socket)
     })
+
   })
 })
