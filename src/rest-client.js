@@ -10,6 +10,7 @@ class RestClient {
    * @param {String} [options.apiKey]
    * @param {String} [options.apiSecret]
    * @param {Boolean} [options.testnet=false]
+   * @param {String} [options.version=v1]
    * @param {Boolean} [options.maxRetries=10]
    * @param {Boolean} [options.keepAlive=true]
    */
