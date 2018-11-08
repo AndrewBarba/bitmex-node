@@ -39,6 +39,13 @@ class OrderBook {
     return this.ask(tick).size
   }
 
+  microPrice(tick = 0) {
+    let bid = this.bid(tick)
+    let ask = this.ask(tick)
+    let price = ((bid.size * ask.price) + (ask.size * bid.price)) / (bid.size + ask.size)
+    return price
+  }
+
   apply({ action, data }) {
     let buyUpdates = data.filter(item => item.side === 'Buy')
     this._buys = helpers.apply(action, this._buys, buyUpdates)
