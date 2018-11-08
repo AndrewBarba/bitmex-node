@@ -15,23 +15,28 @@ class OrderBook {
     return this._sells
   }
 
-  get bidPrice() {
-    return this._buys[0].price
+  bid(tick = 0) {
+    return this._buys[tick]
   }
 
-  get askPrice() {
-    return this._sells[this._sells.length - 1].price
+  ask(tick = 0) {
+    return this._sells[this._sells.length - 1 - tick]
   }
 
-  bidSize(start = 0, end = start + 1) {
-    if (end <= start) throw new Error(`Invalid range: [${start}, ${end})`)
-    return this.buys.slice(start, end).reduce((a, b) => a + b.size, 0)
+  bidPrice(tick = 0) {
+    return this.bid(tick).price
   }
 
-  askSize(start = 0, end = start + 1) {
-    if (end <= start) throw new Error(`Invalid range: [${start}, ${end})`)
-    let n = this.sells.length
-    return this.sells.slice(n - end, n - start).reduce((a, b) => a + b.size, 0)
+  askPrice(tick = 0) {
+    return this.ask(tick).price
+  }
+
+  bidSize(tick = 0) {
+    return this.bid(tick).size
+  }
+
+  askSize(tick = 0) {
+    return this.ask(tick).size
   }
 
   apply({ action, data }) {

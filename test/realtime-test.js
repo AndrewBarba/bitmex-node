@@ -59,7 +59,7 @@ describe('bitmex-node', () => {
 
     it('should subscribe to order book L2', async () => {
       let book = await client.orderBookL2('XBTUSD', book => {
-        book.askPrice.should.be.above(book.bidPrice)
+        book.askPrice().should.be.above(book.bidPrice())
       })
       should.exist(book)
       await new Promise(done => setTimeout(done, 3000))
