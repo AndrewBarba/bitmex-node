@@ -5,6 +5,8 @@ class OrderBook {
   constructor(data = []) {
     this._buys = data.filter(item => item.side === 'Buy')
     this._sells = data.filter(item => item.side === 'Sell')
+    this._keys = ['id', 'side']
+    this._sort = obj => obj.id
   }
 
   get buys() {
@@ -48,10 +50,10 @@ class OrderBook {
 
   apply({ action, data }) {
     let buyUpdates = data.filter(item => item.side === 'Buy')
-    this._buys = helpers.apply(action, this._buys, buyUpdates)
+    this._buys = helpers.apply(action, this._buys, buyUpdates, this._keys, this._sort)
 
     let sellUpdates = data.filter(item => item.side === 'Sell')
-    this._sells = helpers.apply(action, this._sells, sellUpdates)
+    this._sells = helpers.apply(action, this._sells, sellUpdates, this._keys, this._sort)
   }
 }
 

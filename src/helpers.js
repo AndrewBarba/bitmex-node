@@ -30,14 +30,14 @@ exports.time = (offset = 60) => {
  * @param {Array} newData
  * @return {Array}
  */
-exports.apply = (action, existingData, newData) => {
+exports.apply = (action, existingData, newData, keys, sortKey) => {
   if (!newData.length) return existingData
 
   switch (action) {
   case 'partial': return newData
-  case 'insert': return this.applyInsert(existingData, newData)
-  case 'update': return this.applyUpdate(existingData, newData)
-  case 'delete': return this.applyDelete(existingData, newData)
+  case 'insert': return this.applyInsert(existingData, newData, sortKey)
+  case 'update': return this.applyUpdate(existingData, newData, keys)
+  case 'delete': return this.applyDelete(existingData, newData, keys)
   default: throw new Error('Invalid action.')
   }
 }
@@ -48,12 +48,12 @@ exports.apply = (action, existingData, newData) => {
  * @param {Array} newData
  * @return {Array}
  */
-exports.applyInsert = (existingData, newData) => {
+exports.applyInsert = (existingData, newData, sortKey) => {
   let ei = 0; let ni = 0
   while (ei < existingData.length || ni < newData.length) {
     let eo = existingData[ei]
     let no = newData[ni]
-    if (!eo || (eo && no && no.id < eo.id)) {
+    if (!eo || !sortKey || (eo && no && sortKey(no) < sortKey(eo))) {
       existingData.splice(ei, 0, no)
       ni += 1
     } else {
@@ -69,12 +69,12 @@ exports.applyInsert = (existingData, newData) => {
  * @param {Array} newData
  * @return {Array}
  */
-exports.applyUpdate = (existingData, newData) => {
+exports.applyUpdate = (existingData, newData, keys) => {
   let ei = 0; let ni = 0
   while (ei < existingData.length && ni < newData.length) {
     let eo = existingData[ei]
     let no = newData[ni]
-    if (eo && no && no.id === eo.id) {
+    if (eo && no && isSame(no, eo, keys)) {
       existingData[ei] = { ...eo, ...no }
       ni += 1; ei += 1
     } else {
@@ -90,12 +90,12 @@ exports.applyUpdate = (existingData, newData) => {
  * @param {Array} newData
  * @return {Array}
  */
-exports.applyDelete = (existingData, newData) => {
+exports.applyDelete = (existingData, newData, keys) => {
   let ei = 0; let ni = 0
   while (ei < existingData.length && ni < newData.length) {
     let eo = existingData[ei]
     let no = newData[ni]
-    if (eo && no && no.id === eo.id) {
+    if (eo && no && isSame(no, eo, keys)) {
       existingData.splice(ei, 1)
       ni += 1
     } else {
@@ -103,4 +103,11 @@ exports.applyDelete = (existingData, newData) => {
     }
   }
   return existingData
+}
+
+function isSame(o1, o2, keys) {
+  for (let key of keys) {
+    if (o1[key] !== o2[key]) return false
+  }
+  return true
 }

@@ -48,7 +48,7 @@ describe('bitmex-node', () => {
       let data = []
       let partial = await client.subscribe('orderBookL2:XBTUSD', msg => {
         let oldLength = data.length
-        let newLength = client.helpers.apply(msg.action, data, msg.data).length
+        let newLength = client.helpers.apply(msg.action, data, msg.data, partial.keys, obj => obj.id).length
         if (msg.action === 'update') oldLength.should.equal(newLength)
         if (msg.action === 'insert') oldLength.should.equal(newLength - msg.data.length)
         if (msg.action === 'delete') oldLength.should.equal(newLength + msg.data.length)
