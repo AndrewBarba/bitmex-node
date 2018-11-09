@@ -30,12 +30,12 @@ exports.time = (offset = 60) => {
  * @param {Array} newData
  * @return {Array}
  */
-exports.apply = (action, existingData, newData, keys, sortKey) => {
+exports.apply = (action, existingData, newData, keys) => {
   if (!newData.length) return existingData
 
   switch (action) {
   case 'partial': return newData
-  case 'insert': return this.applyInsert(existingData, newData, sortKey)
+  case 'insert': return this.applyInsert(existingData, newData)
   case 'update': return this.applyUpdate(existingData, newData, keys)
   case 'delete': return this.applyDelete(existingData, newData, keys)
   default: throw new Error('Invalid action.')
@@ -48,12 +48,12 @@ exports.apply = (action, existingData, newData, keys, sortKey) => {
  * @param {Array} newData
  * @return {Array}
  */
-exports.applyInsert = (existingData, newData, sortKey) => {
+exports.applyInsert = (existingData, newData) => {
   let ei = 0; let ni = 0
   while (ei < existingData.length || ni < newData.length) {
     let eo = existingData[ei]
     let no = newData[ni]
-    if (!eo || !sortKey || (eo && no && sortKey(no) < sortKey(eo))) {
+    if (!eo || (eo && no && isBefore(no, eo))) {
       existingData.splice(ei, 0, no)
       ni += 1
     } else {
@@ -110,4 +110,14 @@ function isSame(o1, o2, keys) {
     if (o1[key] !== o2[key]) return false
   }
   return true
+}
+
+function isBefore(o1, o2) {
+  if ('timestamp' in o1 && 'timestamp' in o2) {
+    return new Date(o1.timestamp) < new Date(o2.timestamp)
+  }
+  if ('id' in o1 && 'id' in o2) {
+    return Number(o1.id) < Number(o2.id)
+  }
+  return false
 }

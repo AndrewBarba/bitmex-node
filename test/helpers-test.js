@@ -8,13 +8,13 @@ describe('bitmex-node', () => {
       it('should insert 1 new item', () => {
         let data = []
         let newData = [{ id: 1 }]
-        let result = helpers.applyInsert(data, newData, obj => obj.id)
+        let result = helpers.applyInsert(data, newData)
         result.length.should.equal(1)
       })
       it('should insert 2 new items', () => {
         let data = [{ id: 1 }, { id: 4 }]
         let newData = [{ id: 2 }, { id: 5 }]
-        let result = helpers.applyInsert(data, newData, obj => obj.id)
+        let result = helpers.applyInsert(data, newData)
         result.length.should.equal(4)
         result[0].id.should.equal(1)
         result[1].id.should.equal(2)
