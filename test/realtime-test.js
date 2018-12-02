@@ -45,24 +45,30 @@ describe('bitmex-node', () => {
     })
 
     it('should subscribe to raw order book L2', async () => {
-      let data = []
-      let partial = await client.subscribe('orderBookL2:XBTUSD', msg => {
-        let oldLength = data.length
-        let newLength = client.helpers.apply(msg.action, data, msg.data, partial.keys).length
-        if (msg.action === 'update') oldLength.should.equal(newLength)
-        if (msg.action === 'insert') oldLength.should.equal(newLength - msg.data.length)
-        if (msg.action === 'delete') oldLength.should.equal(newLength + msg.data.length)
+      await new Promise(async done => {
+        let data = []
+        let partial = await client.subscribe('orderBookL2_25:XBTUSD', msg => {
+          let oldLength = data.length
+          let newLength = client.helpers.apply(msg.action, data, msg.data, partial.keys).length
+          if (msg.action === 'update') oldLength.should.equal(newLength)
+          if (msg.action === 'insert') oldLength.should.equal(newLength - msg.data.length)
+          if (msg.action === 'delete') oldLength.should.equal(newLength + msg.data.length)
+          done()
+        })
+        data = partial.data
       })
-      data = partial.data
-      await new Promise(done => setTimeout(done, 3000))
     })
 
     it('should subscribe to order book L2', async () => {
-      let book = await client.orderBookL2('XBTUSD', book => {
-        book.askPrice().should.be.above(book.bidPrice())
+      await new Promise(async done => {
+        let book = await client.orderBookL2('XBTUSD', book => {
+          book.askPrice().should.be.above(book.bidPrice())
+          done()
+        })
+        should.exist(book)
+        book.buys().length.should.equal(25)
+        book.sells().length.should.equal(25)
       })
-      should.exist(book)
-      await new Promise(done => setTimeout(done, 3000))
     })
 
     it('should close', done => {

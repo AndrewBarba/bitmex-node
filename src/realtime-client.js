@@ -136,7 +136,7 @@ class RealtimeClient extends EventEmitter {
    */
   async orderBookL2(symbol, callback) {
     let orderBook = new OrderBook()
-    let result = await this.subscribe(`orderBookL2:${symbol}`, update => {
+    let result = await this.subscribe(`orderBookL2_25:${symbol}`, update => {
       orderBook.apply(update)
       callback(orderBook, update)
     })

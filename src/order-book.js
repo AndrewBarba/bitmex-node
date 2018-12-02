@@ -1,27 +1,25 @@
-const helpers = require('./helpers')
-
 class OrderBook {
 
   constructor(data = []) {
-    this._buys = data.filter(item => item.side === 'Buy')
-    this._sells = data.filter(item => item.side === 'Sell')
-    this._keys = ['id', 'side']
+    this._book = _sorted(data)
   }
 
-  get buys() {
-    return this._buys
+  buys() {
+    return this._book.filter(item => item.side === 'Buy')
   }
 
-  get sells() {
-    return this._sells
+  sells() {
+    return this._book.filter(item => item.side === 'Sell')
   }
 
   bid(tick = 0) {
-    return this._buys[tick]
+    let buys = this.buys()
+    return buys[tick]
   }
 
   ask(tick = 0) {
-    return this._sells[this._sells.length - 1 - tick]
+    let sells = this.sells()
+    return sells[sells.length - 1 - tick]
   }
 
   bidPrice(tick = 0) {
@@ -48,12 +46,51 @@ class OrderBook {
   }
 
   apply({ action, data }) {
-    let buyUpdates = data.filter(item => item.side === 'Buy')
-    this._buys = helpers.apply(action, this._buys, buyUpdates, this._keys)
-
-    let sellUpdates = data.filter(item => item.side === 'Sell')
-    this._sells = helpers.apply(action, this._sells, sellUpdates, this._keys)
+    switch (action) {
+    case 'partial':
+      return _partial.call(this, data)
+    case 'insert':
+      return _insert.call(this, data)
+    case 'update':
+      return _update.call(this, data)
+    case 'delete':
+      return _delete.call(this, data)
+    }
   }
+}
+
+function _partial(data) {
+  this._book = _sorted(data)
+}
+
+function _insert(data) {
+  let book = [...this._book, ...data]
+  this._book = _sorted(book)
+}
+
+function _update(data) {
+  let book = this._book.map(item => {
+    for (let newItem of data) {
+      if (newItem.id !== item.id) continue
+      return { ...item, ...newItem }
+    }
+    return item
+  })
+  this._book = _sorted(book)
+}
+
+function _delete(data) {
+  let book = this._book.filter(item => {
+    for (let newItem of data) {
+      if (newItem.id === item.id) return false
+    }
+    return true
+  })
+  this._book = _sorted(book)
+}
+
+function _sorted(book) {
+  return book.sort((a, b) => a.id - b.id)
 }
 
 module.exports = OrderBook
