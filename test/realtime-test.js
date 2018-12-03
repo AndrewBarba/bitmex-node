@@ -62,6 +62,7 @@ describe('bitmex-node', () => {
     it('should subscribe to order book L2', async () => {
       await new Promise(async done => {
         let book = await client.orderBookL2('XBTUSD', book => {
+          book.length.should.be.above(45)
           book.askPrice().should.be.above(book.bidPrice())
           done()
         })

@@ -4,6 +4,10 @@ class OrderBook {
     this._book = _sorted(data)
   }
 
+  get length() {
+    return this._book.length
+  }
+
   buys() {
     return this._book.filter(item => item.side === 'Buy')
   }
