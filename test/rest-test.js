@@ -26,5 +26,16 @@ describe('bitmex-node', () => {
       should.exist(results)
       results.length.should.be.above(-1)
     })
+
+    it('should get bucketed trades', async () => {
+      let results = await client.getTradesBucketed({
+        symbol: 'XBTUSD',
+        binSize: '1m',
+        count: 100,
+        reverse: true
+      })
+      should.exist(results)
+      results.length.should.be.above(-1)
+    })
   })
 })
