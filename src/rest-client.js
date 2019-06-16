@@ -102,9 +102,9 @@ class RestClient {
    * @param {Object} [options.params]
    */
   async request(method, path, { params, data, attempt = 1, expires = helpers.time() } = {}) {
-    let url = params ? `${path}?${stringify(params)}` : path
-    let body = data ? JSON.stringify(data) : ''
-    let headers = {
+    const url = params ? `${path}?${stringify(params)}` : path
+    const body = data ? JSON.stringify(data) : ''
+    const headers = {
       'content-type': 'application/json',
       'accept': 'application/json',
       'api-expires': expires
@@ -120,7 +120,7 @@ class RestClient {
       })
     }
 
-    let res = await this._client.request({
+    const res = await this._client.request({
       method,
       url,
       headers,

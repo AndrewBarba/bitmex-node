@@ -17,12 +17,12 @@ class OrderBook {
   }
 
   bid(tick = 0) {
-    let buys = this.buys()
+    const buys = this.buys()
     return buys[tick]
   }
 
   ask(tick = 0) {
-    let sells = this.sells()
+    const sells = this.sells()
     return sells[sells.length - 1 - tick]
   }
 
@@ -43,9 +43,9 @@ class OrderBook {
   }
 
   microPrice(tick = 0) {
-    let bid = this.bid(tick)
-    let ask = this.ask(tick)
-    let price = ((bid.size * ask.price) + (ask.size * bid.price)) / (bid.size + ask.size)
+    const bid = this.bid(tick)
+    const ask = this.ask(tick)
+    const price = ((bid.size * ask.price) + (ask.size * bid.price)) / (bid.size + ask.size)
     return price
   }
 
@@ -68,13 +68,13 @@ function _partial(data) {
 }
 
 function _insert(data) {
-  let book = [...this._book, ...data]
+  const book = [...this._book, ...data]
   this._book = _sorted(book)
 }
 
 function _update(data) {
-  let book = this._book.map(item => {
-    for (let newItem of data) {
+  const book = this._book.map(item => {
+    for (const newItem of data) {
       if (newItem.id !== item.id) continue
       return { ...item, ...newItem }
     }
@@ -84,8 +84,8 @@ function _update(data) {
 }
 
 function _delete(data) {
-  let book = this._book.filter(item => {
-    for (let newItem of data) {
+  const book = this._book.filter(item => {
+    for (const newItem of data) {
       if (newItem.id === item.id) return false
     }
     return true

@@ -56,8 +56,8 @@ class Bitmex {
    * @return {Promise}
    */
   startDeadMansSwitch(timeout = 60000) {
-    let interval = (timeout / 4)
-    let deadManRequest = () => this.rest.cancelOrdersAfter({ timeout })
+    const interval = (timeout / 4)
+    const deadManRequest = () => this.rest.cancelOrdersAfter({ timeout })
     this._deadManInterval = setInterval(deadManRequest, interval)
     return deadManRequest()
   }

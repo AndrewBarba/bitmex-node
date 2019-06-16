@@ -47,13 +47,13 @@ class RealtimeClient extends EventEmitter {
    * @method connect
    */
   connect() {
-    let url = this._testnet ? 'wss://testnet.bitmex.com/realtime' : 'wss://www.bitmex.com/realtime'
-    let headers = {}
+    const url = this._testnet ? 'wss://testnet.bitmex.com/realtime' : 'wss://www.bitmex.com/realtime'
+    const headers = {}
 
     if (this._apiKey) {
-      let method = 'GET'
-      let url = '/realtime'
-      let expires = helpers.time()
+      const method = 'GET'
+      const url = '/realtime'
+      const expires = helpers.time()
       headers['api-key'] = this._apiKey
       headers['api-expires'] = expires
       headers['api-signature'] = helpers.requestSignature(this._apiSecret, { method, url, expires })
@@ -135,8 +135,8 @@ class RealtimeClient extends EventEmitter {
    * @return {Promise}
    */
   async orderBookL2(symbol, callback) {
-    let orderBook = new OrderBook()
-    let result = await this.subscribe(`orderBookL2_25:${symbol}`, update => {
+    const orderBook = new OrderBook()
+    const result = await this.subscribe(`orderBookL2_25:${symbol}`, update => {
       orderBook.apply(update)
       callback(orderBook, update)
     })
@@ -151,7 +151,7 @@ class RealtimeClient extends EventEmitter {
    * @return {Promise}
    */
   async subscribe(table, callback) {
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       let partial = false
 
       this.once(`message.subscribe.${table}`, msg => {
@@ -192,7 +192,7 @@ class RealtimeClient extends EventEmitter {
    */
   request(op, args = []) {
     return new Promise((resolve, reject) => {
-      let data = JSON.stringify({ op, args })
+      const data = JSON.stringify({ op, args })
       this._socket.send(data, err => {
         if (err) return reject(err)
         resolve()

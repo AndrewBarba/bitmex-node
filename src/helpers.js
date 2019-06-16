@@ -10,7 +10,7 @@ const crypto = require('crypto')
  * @return {String}
  */
 exports.requestSignature = (secret, { method, url, expires, body = '' }) => {
-  let hmac = crypto.createHmac('sha256', secret)
+  const hmac = crypto.createHmac('sha256', secret)
   return hmac.update(`${method.toUpperCase()}${url}${expires}${body}`).digest('hex')
 }
 
@@ -51,8 +51,8 @@ exports.apply = (action, existingData, newData, keys) => {
 exports.applyInsert = (existingData, newData) => {
   let ei = 0; let ni = 0
   while (ei < existingData.length || ni < newData.length) {
-    let eo = existingData[ei]
-    let no = newData[ni]
+    const eo = existingData[ei]
+    const no = newData[ni]
     if (!eo || (eo && no && isBefore(no, eo))) {
       existingData.splice(ei, 0, no)
       ni += 1
@@ -72,8 +72,8 @@ exports.applyInsert = (existingData, newData) => {
 exports.applyUpdate = (existingData, newData, keys) => {
   let ei = 0; let ni = 0
   while (ei < existingData.length && ni < newData.length) {
-    let eo = existingData[ei]
-    let no = newData[ni]
+    const eo = existingData[ei]
+    const no = newData[ni]
     if (eo && no && isSame(no, eo, keys)) {
       existingData[ei] = { ...eo, ...no }
       ni += 1; ei += 1
@@ -93,8 +93,8 @@ exports.applyUpdate = (existingData, newData, keys) => {
 exports.applyDelete = (existingData, newData, keys) => {
   let ei = 0; let ni = 0
   while (ei < existingData.length && ni < newData.length) {
-    let eo = existingData[ei]
-    let no = newData[ni]
+    const eo = existingData[ei]
+    const no = newData[ni]
     if (eo && no && isSame(no, eo, keys)) {
       existingData.splice(ei, 1)
       ni += 1
@@ -106,7 +106,7 @@ exports.applyDelete = (existingData, newData, keys) => {
 }
 
 function isSame(o1, o2, keys) {
-  for (let key of keys) {
+  for (const key of keys) {
     if (o1[key] !== o2[key]) return false
   }
   return true
