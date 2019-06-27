@@ -73,24 +73,18 @@ function _insert(data) {
 }
 
 function _update(data) {
-  const book = this._book.map(item => {
+  this._book = this._book.map(item => {
     for (const newItem of data) {
       if (newItem.id !== item.id) continue
       return { ...item, ...newItem }
     }
     return item
   })
-  this._book = _sorted(book)
 }
 
 function _delete(data) {
-  const book = this._book.filter(item => {
-    for (const newItem of data) {
-      if (newItem.id === item.id) return false
-    }
-    return true
-  })
-  this._book = _sorted(book)
+  const ids = new Set(data.map(item => item.id))
+  this._book = this._book.filter(item => !ids.has(item.id))
 }
 
 function _sorted(book) {
