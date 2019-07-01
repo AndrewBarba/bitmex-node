@@ -1,3 +1,4 @@
+/* eslint-disable no-async-promise-executor */
 const { API_KEY, API_SECRET } = process.env
 const should = require('should')
 const { RealtimeClient } = require('../src')
