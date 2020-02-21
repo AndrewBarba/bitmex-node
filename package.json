@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "src/index.js",
   "engines": {
-    "node": ">=8.10.0"
+    "node": ">=10.14.0"
   },
   "keywords": [
     "bitmex",
@@ -24,11 +24,11 @@
     "url": "https://github.com/AndrewBarba/bitmex-node"
   },
   "dependencies": {
-    "agentkeepalive": "4.1.0",
-    "bufferutil": "4.0.1",
-    "got": "10.6.0",
-    "utf-8-validate": "5.0.2",
-    "ws": "7.2.1"
+    "agentkeepalive": "^4.1.0",
+    "bufferutil": "^4.0.1",
+    "got": "^10.6.0",
+    "utf-8-validate": "^5.0.2",
+    "ws": "^7.2.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -36,7 +36,7 @@
     "should": "^13.2.3"
   },
   "scripts": {
-    "lint": "npx eslint ./",
-    "test": "env $(cat .env | xargs) npx mocha --exit --bail --slow 1000 --timeout 60000 ./test"
+    "lint": "eslint ./",
+    "test": "env $(cat .env | xargs) mocha --exit --bail --slow 1000 --timeout 60000 ./test"
   }
 }
