@@ -1,10 +1,9 @@
-const axios = require('axios')
-const https = require('https')
+const { HttpsAgent } = require('agentkeepalive')
 const { stringify } = require('querystring')
+const got = require('got')
 const helpers = require('./helpers')
 
 class RestClient {
-
   /**
    * @constructor
    * @param {String} [options.apiKey]
@@ -20,9 +19,12 @@ class RestClient {
     this._testnet = testnet
     this._maxRetries = maxRetries
     this._version = version
-    this._client = axios.create({
-      baseURL: testnet ? `https://testnet.bitmex.com/api/${version}` : `https://www.bitmex.com/api/${version}`,
-      httpsAgent: new https.Agent({ keepAlive })
+    this._client = got.extend({
+      agent: new HttpsAgent({ keepAlive }),
+      prefixUrl: testnet 
+        ? `https://testnet.bitmex.com/api/${version}` 
+        : `https://www.bitmex.com/api/${version}`,
+      timeout: 5 * 1000
     })
   }
 
@@ -38,39 +40,39 @@ class RestClient {
    *-------------------------------------------------------------------------*/
 
   getOrder(params) {
-    return this.request('get', '/order', { params })
+    return this.request('get', 'order', { params })
   }
 
   createOrder(data) {
-    return this.request('post', '/order', { data })
+    return this.request('post', 'order', { data })
   }
 
   createOrderBulk(data) {
-    return this.request('post', '/order/bulk', { data })
+    return this.request('post', 'order/bulk', { data })
   }
 
   updateOrder(data) {
-    return this.request('put', '/order', { data })
+    return this.request('put', 'order', { data })
   }
 
   updateOrderBulk(data) {
-    return this.request('put', '/order/bulk', { data })
+    return this.request('put', 'order/bulk', { data })
   }
 
   deleteOrder(data) {
-    return this.request('delete', '/order', { data })
+    return this.request('delete', 'order', { data })
   }
 
   deleteAllOrders(data) {
-    return this.request('delete', '/order/all', { data })
+    return this.request('delete', 'order/all', { data })
   }
 
   cancelOrdersAfter(data) {
-    return this.request('post', '/order/cancelAllAfter', { data })
+    return this.request('post', 'order/cancelAllAfter', { data })
   }
 
   closePosition(data) {
-    return this.request('post', '/order/closePosition', { data })
+    return this.request('post', 'order/closePosition', { data })
   }
 
   /*-------------------------------------------------------------------------*
@@ -78,7 +80,7 @@ class RestClient {
    *-------------------------------------------------------------------------*/
 
   getPosition(params) {
-    return this.request('get', '/position', { params })
+    return this.request('get', 'position', { params })
   }
 
   /*-------------------------------------------------------------------------*
@@ -86,7 +88,7 @@ class RestClient {
    *-------------------------------------------------------------------------*/
 
   getTradesBucketed(params) {
-    return this.request('get', '/trade/bucketed', { params })
+    return this.request('get', 'trade/bucketed', { params })
   }
 
   /*-------------------------------------------------------------------------*
@@ -103,7 +105,7 @@ class RestClient {
    */
   async request(method, path, { params, data, attempt = 1, expires = helpers.time() } = {}) {
     const url = params ? `${path}?${stringify(params)}` : path
-    const body = data ? JSON.stringify(data) : ''
+    const body = data ? JSON.stringify(data) : undefined
     const headers = {
       'content-type': 'application/json',
       'accept': 'application/json',
@@ -114,32 +116,31 @@ class RestClient {
       headers['api-key'] = this._apiKey
       headers['api-signature'] = helpers.requestSignature(this._apiSecret, {
         method,
-        url: `/api/${this._version}${url}`,
+        url: `/api/${this._version}/${url}`,
         expires,
         body
       })
     }
 
-    const res = await this._client.request({
-      method,
-      url,
+    const res = await this._client[method](url, {
       headers,
-      data: body,
-      validateStatus: null
+      body,
+      responseType: 'json',
+      throwHttpErrors: false
     })
 
     // Handle retries
-    if (res.status === 503) {
+    if (res.statusCode === 503) {
       if (attempt > this._maxRetries) throw res
       await backoffDelay(attempt)
       return this.request(method, path, { params, data, expires, attempt: attempt + 1 })
     }
 
-    if (res.status >= 400) {
-      throw res.data.error
+    if (res.statusCode >= 400) {
+      throw res.body.error
     }
 
-    return res.data
+    return res.body
   }
 }
 

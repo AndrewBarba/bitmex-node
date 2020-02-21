@@ -4,7 +4,7 @@ const { RestClient } = require('../src')
 let client = null
 
 describe('bitmex-node', () => {
-  describe('rest', () => {
+  describe.only('rest', () => {
 
     beforeEach(() => {
       client = new RestClient({
@@ -15,20 +15,20 @@ describe('bitmex-node', () => {
     })
 
     it('should list orders', async () => {
-      let results = await client.getOrder()
+      const results = await client.getOrder()
       should.exist(results)
       results.length.should.be.above(-1)
     })
 
     it('should get positions', async () => {
-      let filter = JSON.stringify({ symbol: 'XBTUSD' })
-      let results = await client.getPosition({ filter })
+      const filter = JSON.stringify({ symbol: 'XBTUSD' })
+      const results = await client.getPosition({ filter })
       should.exist(results)
       results.length.should.be.above(-1)
     })
 
     it('should get bucketed trades', async () => {
-      let results = await client.getTradesBucketed({
+      const results = await client.getTradesBucketed({
         symbol: 'XBTUSD',
         binSize: '1m',
         count: 100,
@@ -36,6 +36,11 @@ describe('bitmex-node', () => {
       })
       should.exist(results)
       results.length.should.be.above(-1)
+    })
+
+    it('should delete all orders', async () => {
+      const results = await client.deleteAllOrders()
+      should.exist(results)
     })
   })
 })
