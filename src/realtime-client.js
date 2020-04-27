@@ -142,6 +142,22 @@ class RealtimeClient extends EventEmitter {
   }
 
   /**
+   * @method orderBookL2_25
+   * @param {String} symbol
+   * @param {Function} callback
+   * @return {Promise}
+   */
+  async orderBookL2_25(symbol, callback) {
+    const orderBook = new OrderBook()
+    const result = await this.subscribe(`orderBookL2_25:${symbol}`, (update) => {
+      orderBook.apply(update)
+      callback(orderBook, update)
+    })
+    orderBook.apply(result)
+    return orderBook
+  }
+
+  /**
    * @method subscribe
    * @param {String} table
    * @param {Function} callback

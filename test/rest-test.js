@@ -4,7 +4,7 @@ const { RestClient } = require('../src')
 let client = null
 
 describe('bitmex-node', () => {
-  describe.only('rest', () => {
+  describe('rest', () => {
     beforeEach(() => {
       client = new RestClient({
         apiKey: API_KEY,

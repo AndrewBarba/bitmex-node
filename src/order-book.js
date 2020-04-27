@@ -1,18 +1,20 @@
 class OrderBook {
   constructor(data = []) {
-    this._book = _sorted(data)
+    this._partial(data)
   }
 
   get length() {
-    return this._book.length
+    return Object.keys(this._book).length
   }
 
   buys() {
-    return this._book.filter((item) => item.side === 'Buy')
+    const rows = Object.values(this._book).filter((item) => item.side === 'Buy')
+    return this._sorted(rows)
   }
 
   sells() {
-    return this._book.filter((item) => item.side === 'Sell')
+    const rows = Object.values(this._book).filter((item) => item.side === 'Sell')
+    return this._sorted(rows)
   }
 
   bid(tick = 0) {
@@ -51,43 +53,43 @@ class OrderBook {
   apply({ action, data }) {
     switch (action) {
       case 'partial':
-        return _partial.call(this, data)
+        return this._partial(data)
       case 'insert':
-        return _insert.call(this, data)
+        return this._insert(data)
       case 'update':
-        return _update.call(this, data)
+        return this._update(data)
       case 'delete':
-        return _delete.call(this, data)
+        return this._delete(data)
     }
   }
-}
 
-function _partial(data) {
-  this._book = _sorted(data)
-}
+  _partial(data) {
+    this._book = {}
+    this._insert(data)
+  }
 
-function _insert(data) {
-  const book = [...this._book, ...data]
-  this._book = _sorted(book)
-}
-
-function _update(data) {
-  this._book = this._book.map((item) => {
-    for (const newItem of data) {
-      if (newItem.id !== item.id) continue
-      return { ...item, ...newItem }
+  _insert(data) {
+    for (const row of data) {
+      this._book[row.id] = row
     }
-    return item
-  })
-}
+  }
 
-function _delete(data) {
-  const ids = new Set(data.map((item) => item.id))
-  this._book = this._book.filter((item) => !ids.has(item.id))
-}
+  _update(data) {
+    for (const row of data) {
+      const oldRow = this._book[row.id] || {}
+      this._book[row.id] = { ...oldRow, ...row }
+    }
+  }
 
-function _sorted(book) {
-  return book.sort((a, b) => a.id - b.id)
+  _delete(data) {
+    for (const row of data) {
+      delete this._book[row.id]
+    }
+  }
+
+  _sorted(book) {
+    return book.sort((a, b) => a.id - b.id)
+  }
 }
 
 module.exports = OrderBook

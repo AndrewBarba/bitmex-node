@@ -44,31 +44,16 @@ describe('bitmex-node', () => {
       msg.action.should.equal('partial')
     })
 
-    it('should subscribe to raw order book L2', async () => {
-      await new Promise(async (done) => {
-        let data = []
-        let partial = await client.subscribe('orderBookL2_25:XBTUSD', (msg) => {
-          let oldLength = data.length
-          let newLength = client.helpers.apply(msg.action, data, msg.data, partial.keys).length
-          if (msg.action === 'update') oldLength.should.equal(newLength)
-          if (msg.action === 'insert') oldLength.should.equal(newLength - msg.data.length)
-          if (msg.action === 'delete') oldLength.should.equal(newLength + msg.data.length)
-          done()
-        })
-        data = partial.data
-      })
-    })
-
     it('should subscribe to order book L2', async () => {
       await new Promise(async (done) => {
         let book = await client.orderBookL2('XBTUSD', (book) => {
           book.length.should.be.above(45)
           book.askPrice().should.be.above(book.bidPrice())
-          done()
         })
         should.exist(book)
-        book.buys().length.should.equal(25)
-        book.sells().length.should.equal(25)
+        book.buys().length.should.be.above(25)
+        book.sells().length.should.be.above(25)
+        done()
       })
     })
 
