@@ -4,7 +4,6 @@ const OrderBook = require('./order-book')
 const helpers = require('./helpers')
 
 class RealtimeClient extends EventEmitter {
-
   /**
    * @constructor
    * @param {String} [options.apiKey]
@@ -47,7 +46,9 @@ class RealtimeClient extends EventEmitter {
    * @method connect
    */
   connect() {
-    const url = this._testnet ? 'wss://testnet.bitmex.com/realtime' : 'wss://www.bitmex.com/realtime'
+    const url = this._testnet
+      ? 'wss://testnet.bitmex.com/realtime'
+      : 'wss://www.bitmex.com/realtime'
     const headers = {}
 
     if (this._apiKey) {
@@ -90,7 +91,7 @@ class RealtimeClient extends EventEmitter {
     let message
     try {
       message = JSON.parse(text)
-    } catch(error) {
+    } catch (error) {
       return this.emit('message.error', { error })
     }
 
@@ -98,11 +99,9 @@ class RealtimeClient extends EventEmitter {
 
     this.emit('message', message)
 
-    if (message.subscribe)
-      this.emit(`message.subscribe.${message.subscribe}`, message)
+    if (message.subscribe) this.emit(`message.subscribe.${message.subscribe}`, message)
 
-    if (message.table)
-      this.emit(`message.table.${message.table}`, message)
+    if (message.table) this.emit(`message.table.${message.table}`, message)
 
     if (message.table && message.filter)
       this.emit(`message.table.${message.table}:${message.filter.symbol}`, message)
@@ -110,11 +109,9 @@ class RealtimeClient extends EventEmitter {
     if (message.table && message.data.length)
       this.emit(`message.table.${message.table}:${message.data[0].symbol}`, message)
 
-    if (message.error)
-      this.emit(`message.error`, message)
+    if (message.error) this.emit(`message.error`, message)
 
-    if (message.request)
-      this.emit(`message.request.${message.request.op}`, message)
+    if (message.request) this.emit(`message.request.${message.request.op}`, message)
   }
 
   /**
@@ -136,7 +133,7 @@ class RealtimeClient extends EventEmitter {
    */
   async orderBookL2(symbol, callback) {
     const orderBook = new OrderBook()
-    const result = await this.subscribe(`orderBookL2:${symbol}`, update => {
+    const result = await this.subscribe(`orderBookL2:${symbol}`, (update) => {
       orderBook.apply(update)
       callback(orderBook, update)
     })
@@ -154,11 +151,11 @@ class RealtimeClient extends EventEmitter {
     const promise = new Promise((resolve, reject) => {
       let partial = false
 
-      this.once(`message.subscribe.${table}`, msg => {
+      this.once(`message.subscribe.${table}`, (msg) => {
         if (!msg.success) reject(msg)
       })
 
-      this.on(`message.table.${table}`, msg => {
+      this.on(`message.table.${table}`, (msg) => {
         if (partial && msg.action !== 'partial') {
           return callback(msg)
         } else if (msg.action === 'partial') {
@@ -193,7 +190,7 @@ class RealtimeClient extends EventEmitter {
   request(op, args = []) {
     return new Promise((resolve, reject) => {
       const data = JSON.stringify({ op, args })
-      this._socket.send(data, err => {
+      this._socket.send(data, (err) => {
         if (err) return reject(err)
         resolve()
       })

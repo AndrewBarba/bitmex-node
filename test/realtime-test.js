@@ -6,8 +6,7 @@ let client = null
 
 describe('bitmex-node', () => {
   describe('realtime', () => {
-
-    beforeEach(done => {
+    beforeEach((done) => {
       client = new RealtimeClient({
         apiKey: API_KEY,
         apiSecret: API_SECRET,
@@ -23,8 +22,8 @@ describe('bitmex-node', () => {
     })
 
     it('should subscribe to quote updates', async () => {
-      await new Promise(async resolve => {
-        let msg = await client.subscribe('quote:XBTUSD', msg => {
+      await new Promise(async (resolve) => {
+        let msg = await client.subscribe('quote:XBTUSD', (msg) => {
           msg.action.should.equal('insert')
           resolve()
         })
@@ -46,9 +45,9 @@ describe('bitmex-node', () => {
     })
 
     it('should subscribe to raw order book L2', async () => {
-      await new Promise(async done => {
+      await new Promise(async (done) => {
         let data = []
-        let partial = await client.subscribe('orderBookL2_25:XBTUSD', msg => {
+        let partial = await client.subscribe('orderBookL2_25:XBTUSD', (msg) => {
           let oldLength = data.length
           let newLength = client.helpers.apply(msg.action, data, msg.data, partial.keys).length
           if (msg.action === 'update') oldLength.should.equal(newLength)
@@ -61,8 +60,8 @@ describe('bitmex-node', () => {
     })
 
     it('should subscribe to order book L2', async () => {
-      await new Promise(async done => {
-        let book = await client.orderBookL2('XBTUSD', book => {
+      await new Promise(async (done) => {
+        let book = await client.orderBookL2('XBTUSD', (book) => {
           book.length.should.be.above(45)
           book.askPrice().should.be.above(book.bidPrice())
           done()
@@ -73,8 +72,8 @@ describe('bitmex-node', () => {
       })
     })
 
-    it('should close', done => {
-      client.on('close', code => {
+    it('should close', (done) => {
+      client.on('close', (code) => {
         should.exist(code)
         code.should.equal(1000)
         done()
@@ -82,6 +81,5 @@ describe('bitmex-node', () => {
       client.disconnect()
       should.not.exist(client._socket)
     })
-
   })
 })

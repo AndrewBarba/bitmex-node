@@ -5,7 +5,6 @@ let client = null
 
 describe('bitmex-node', () => {
   describe.only('rest', () => {
-
     beforeEach(() => {
       client = new RestClient({
         apiKey: API_KEY,

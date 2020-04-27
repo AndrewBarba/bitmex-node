@@ -3,7 +3,6 @@ const helpers = require('../src/helpers')
 
 describe('bitmex-node', () => {
   describe('helpers', () => {
-
     describe('#applyInsert', () => {
       it('should insert 1 new item', () => {
         let data = []
@@ -29,8 +28,17 @@ describe('bitmex-node', () => {
         result.length.should.equal(0)
       })
       it('should update 2 items', () => {
-        let data = [{ id: 0, val: 0 }, { id: 1, val: 0 }, { id: 2, val: 0 }, { id: 4, val: 0 }, { id: 5, val: 0 }]
-        let newData = [{ id: 1, val: 1 }, { id: 4, val: 1 }]
+        let data = [
+          { id: 0, val: 0 },
+          { id: 1, val: 0 },
+          { id: 2, val: 0 },
+          { id: 4, val: 0 },
+          { id: 5, val: 0 }
+        ]
+        let newData = [
+          { id: 1, val: 1 },
+          { id: 4, val: 1 }
+        ]
         let result = helpers.applyUpdate(data, newData, ['id'])
         result.length.should.equal(5)
         result[1].val.should.equal(1)
@@ -62,6 +70,5 @@ describe('bitmex-node', () => {
         result[2].id.should.equal(5)
       })
     })
-
   })
 })

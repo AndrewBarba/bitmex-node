@@ -13,16 +13,26 @@ class RestClient {
    * @param {Boolean} [options.maxRetries=10]
    * @param {Boolean} [options.keepAlive=true]
    */
-  constructor({ apiKey, apiSecret, testnet = false, version = 'v1', maxRetries = 10, keepAlive = true } = {}) {
+  constructor({
+    apiKey,
+    apiSecret,
+    testnet = false,
+    version = 'v1',
+    maxRetries = 10,
+    keepAlive = true
+  } = {}) {
     this._apiKey = apiKey
     this._apiSecret = apiSecret
     this._testnet = testnet
     this._maxRetries = maxRetries
     this._version = version
     this._client = got.extend({
-      agent: new HttpsAgent({ keepAlive }),
-      prefixUrl: testnet 
-        ? `https://testnet.bitmex.com/api/${version}` 
+      agent: {
+        https: new HttpsAgent({ keepAlive })
+      },
+      http2: true,
+      prefixUrl: testnet
+        ? `https://testnet.bitmex.com/api/${version}`
         : `https://www.bitmex.com/api/${version}`,
       timeout: 5 * 1000
     })
@@ -108,7 +118,7 @@ class RestClient {
     const body = data ? JSON.stringify(data) : undefined
     const headers = {
       'content-type': 'application/json',
-      'accept': 'application/json',
+      accept: 'application/json',
       'api-expires': expires
     }
 
@@ -145,7 +155,7 @@ class RestClient {
 }
 
 function backoffDelay(attempt = 1) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, 500 * attempt)
   })
 }

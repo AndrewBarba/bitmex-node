@@ -34,11 +34,16 @@ exports.apply = (action, existingData, newData, keys) => {
   if (!newData.length) return existingData
 
   switch (action) {
-  case 'partial': return newData
-  case 'insert': return this.applyInsert(existingData, newData)
-  case 'update': return this.applyUpdate(existingData, newData, keys)
-  case 'delete': return this.applyDelete(existingData, newData, keys)
-  default: throw new Error('Invalid action.')
+    case 'partial':
+      return newData
+    case 'insert':
+      return this.applyInsert(existingData, newData)
+    case 'update':
+      return this.applyUpdate(existingData, newData, keys)
+    case 'delete':
+      return this.applyDelete(existingData, newData, keys)
+    default:
+      throw new Error('Invalid action.')
   }
 }
 
@@ -49,7 +54,8 @@ exports.apply = (action, existingData, newData, keys) => {
  * @return {Array}
  */
 exports.applyInsert = (existingData, newData) => {
-  let ei = 0; let ni = 0
+  let ei = 0
+  let ni = 0
   while (ei < existingData.length || ni < newData.length) {
     const eo = existingData[ei]
     const no = newData[ni]
@@ -70,13 +76,15 @@ exports.applyInsert = (existingData, newData) => {
  * @return {Array}
  */
 exports.applyUpdate = (existingData, newData, keys) => {
-  let ei = 0; let ni = 0
+  let ei = 0
+  let ni = 0
   while (ei < existingData.length && ni < newData.length) {
     const eo = existingData[ei]
     const no = newData[ni]
     if (eo && no && isSame(no, eo, keys)) {
       existingData[ei] = { ...eo, ...no }
-      ni += 1; ei += 1
+      ni += 1
+      ei += 1
     } else {
       ei += 1
     }
@@ -91,7 +99,8 @@ exports.applyUpdate = (existingData, newData, keys) => {
  * @return {Array}
  */
 exports.applyDelete = (existingData, newData, keys) => {
-  let ei = 0; let ni = 0
+  let ei = 0
+  let ni = 0
   while (ei < existingData.length && ni < newData.length) {
     const eo = existingData[ei]
     const no = newData[ni]

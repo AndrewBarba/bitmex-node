@@ -3,7 +3,6 @@ const RealtimeClient = require('./realtime-client')
 const helpers = require('./helpers')
 
 class Bitmex {
-
   /**
    * @static
    * @param {RestClient} RestClient
@@ -56,7 +55,7 @@ class Bitmex {
    * @return {Promise}
    */
   startDeadMansSwitch(timeout = 60000) {
-    const interval = (timeout / 4)
+    const interval = timeout / 4
     const deadManRequest = () => this.rest.cancelOrdersAfter({ timeout })
     this._deadManInterval = setInterval(deadManRequest, interval)
     return deadManRequest()

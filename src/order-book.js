@@ -1,5 +1,4 @@
 class OrderBook {
-
   constructor(data = []) {
     this._book = _sorted(data)
   }
@@ -9,11 +8,11 @@ class OrderBook {
   }
 
   buys() {
-    return this._book.filter(item => item.side === 'Buy')
+    return this._book.filter((item) => item.side === 'Buy')
   }
 
   sells() {
-    return this._book.filter(item => item.side === 'Sell')
+    return this._book.filter((item) => item.side === 'Sell')
   }
 
   bid(tick = 0) {
@@ -45,20 +44,20 @@ class OrderBook {
   microPrice(tick = 0) {
     const bid = this.bid(tick)
     const ask = this.ask(tick)
-    const price = ((bid.size * ask.price) + (ask.size * bid.price)) / (bid.size + ask.size)
+    const price = (bid.size * ask.price + ask.size * bid.price) / (bid.size + ask.size)
     return price
   }
 
   apply({ action, data }) {
     switch (action) {
-    case 'partial':
-      return _partial.call(this, data)
-    case 'insert':
-      return _insert.call(this, data)
-    case 'update':
-      return _update.call(this, data)
-    case 'delete':
-      return _delete.call(this, data)
+      case 'partial':
+        return _partial.call(this, data)
+      case 'insert':
+        return _insert.call(this, data)
+      case 'update':
+        return _update.call(this, data)
+      case 'delete':
+        return _delete.call(this, data)
     }
   }
 }
@@ -73,7 +72,7 @@ function _insert(data) {
 }
 
 function _update(data) {
-  this._book = this._book.map(item => {
+  this._book = this._book.map((item) => {
     for (const newItem of data) {
       if (newItem.id !== item.id) continue
       return { ...item, ...newItem }
@@ -83,8 +82,8 @@ function _update(data) {
 }
 
 function _delete(data) {
-  const ids = new Set(data.map(item => item.id))
-  this._book = this._book.filter(item => !ids.has(item.id))
+  const ids = new Set(data.map((item) => item.id))
+  this._book = this._book.filter((item) => !ids.has(item.id))
 }
 
 function _sorted(book) {
