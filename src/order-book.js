@@ -4,16 +4,16 @@ class OrderBook {
   }
 
   get length() {
-    return Object.keys(this._book).length
+    return Object.keys(this._book.Buy).length + Object.keys(this._book.Sell).length
   }
 
   buys() {
-    const rows = Object.values(this._book).filter((item) => item.side === 'Buy')
+    const rows = Object.values(this._book.Buy)
     return this._sorted(rows)
   }
 
   sells() {
-    const rows = Object.values(this._book).filter((item) => item.side === 'Sell')
+    const rows = Object.values(this._book.Sell)
     return this._sorted(rows)
   }
 
@@ -64,26 +64,26 @@ class OrderBook {
   }
 
   _partial(data) {
-    this._book = {}
+    this._book = { Buy: {}, Sell: {} }
     this._insert(data)
   }
 
   _insert(data) {
     for (const row of data) {
-      this._book[row.id] = row
+      this._book[row.side][row.id] = row
     }
   }
 
   _update(data) {
     for (const row of data) {
-      const oldRow = this._book[row.id] || {}
-      this._book[row.id] = { ...oldRow, ...row }
+      const oldRow = this._book[row.side][row.id] || {}
+      this._book[row.side][row.id] = { ...oldRow, ...row }
     }
   }
 
   _delete(data) {
     for (const row of data) {
-      delete this._book[row.id]
+      delete this._book[row.side][row.id]
     }
   }
 
