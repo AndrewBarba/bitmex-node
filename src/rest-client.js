@@ -19,7 +19,8 @@ class RestClient {
     testnet = false,
     version = 'v1',
     maxRetries = 10,
-    keepAlive = true
+    keepAlive = true,
+    timeout = 10 * 1000
   } = {}) {
     this._apiKey = apiKey
     this._apiSecret = apiSecret
@@ -34,7 +35,7 @@ class RestClient {
       prefixUrl: testnet
         ? `https://testnet.bitmex.com/api/${version}`
         : `https://www.bitmex.com/api/${version}`,
-      timeout: 5 * 1000
+      timeout
     })
   }
 
